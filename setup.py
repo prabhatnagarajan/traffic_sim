@@ -71,7 +71,7 @@ def draw_pedestrians(screen, pedestrians, track):
 
 def main():
 		traffic_lights = [TrafficLight(10, Color.green, 10, 10, 10), TrafficLight(40, Color.red, 10, 10, 10)]
-		pedestrians = [Pedestrian(1.0, Direction.left, 10)]
+		pedestrians = [Pedestrian(0.5, Direction.left, 10)]
 		cars = []
 		cars.append(Car(2, 10, Direction.left, 1, False, 50))
 
