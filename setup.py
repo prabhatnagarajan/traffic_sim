@@ -47,7 +47,7 @@ def draw_cars(screen, cars, track):
 		if lane == 2:
 			x += 170
 		x+= 50
-		y = 680/track.length * loc
+		y = (680 * loc)/track.length
 		#rect takes in x,y,width,height
 		pg.draw.rect(screen, BLUE, (x, y, 50, 680/track.length))
 
