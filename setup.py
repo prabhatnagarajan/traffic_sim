@@ -70,7 +70,7 @@ def draw_pedestrians(screen, pedestrians, track):
 
 
 def main():
-		traffic_lights = [TrafficLight(10, Color.green, 10, 10, 10), TrafficLight(40, Color.red, 10, 10, 10)]
+		traffic_lights = [TrafficLight(10, Color.green, 10, 5, 20), TrafficLight(40, Color.red, 10, 5, 20)]
 		pedestrians = []
 		pedestrians.append(Pedestrian(0.5, Direction.left, 10))
 		pedestrians.append(Pedestrian(0.5, Direction.right, 10))
@@ -130,7 +130,7 @@ def main():
 		    # --- Go ahead and update the screen with what we've drawn.
 			# reward += self.reward_mat[agent.get_loc()]
 			# self.recording.append(agent.get_loc())
-			delay = 680
+			delay = 250
 			# if agent.get_loc() == self.goal:
 			# 	delay = 680
 			# 	done = True
