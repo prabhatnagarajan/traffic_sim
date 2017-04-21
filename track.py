@@ -1,3 +1,4 @@
+from agent import *
 class Track:
 	def __init__(self, length, cars, traffic_lights, pedestrians, agent):
 		self.length = length
@@ -8,9 +9,11 @@ class Track:
 
 	def step(self):
 		for car in self.cars:
-			car.step(self)
+			if not isinstance(car, Agent):
+				car.step(self)
 		for light in self.traffic_lights:
 			light.step()
 		for person in self.pedestrians:
 			person.step(self)
+		self.agent.step(self)
 

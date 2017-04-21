@@ -103,7 +103,8 @@ def main():
 		cars.append(Car(1, 20, Direction.left, 0, True, 50))
 		cars.append(Car(2, 35, Direction.right, 0, True, 50))
 
-		agent = Agent(2, 45, Direction.right, 0, 50)
+		agent = Agent(1, 25, Direction.right, 0, 50)
+		cars.append(agent)
 		track = Track(50, cars, traffic_lights, pedestrians, agent)
 		pg.init()
 		screen = pg.display.set_mode((680, 680))
@@ -144,7 +145,7 @@ def main():
 			draw_pedestrians(screen, pedestrians, track)
 			draw_agent(screen, agent, track)
 		    # --- Go ahead and update the screen with what we've drawn.
-			delay = 250
+			delay = 100
 
 			pg.display.flip()
 		    # --- Limit to 60 frames per second
