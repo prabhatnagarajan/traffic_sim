@@ -23,7 +23,6 @@ def draw_lanes(screen):
 	pg.draw.line(screen, BLACK, (510,0), (510,680), 1)
 
 def draw_lights(screen, traffic_lights, track):
-	print len(traffic_lights)
 	for light in traffic_lights:
 		loc = light.loc
 		if light.color == Color.green:
@@ -52,7 +51,7 @@ def draw_cars(screen, cars, track):
 
 def main():
 		traffic_lights = [TrafficLight(10, Color.green, 10, 10, 10), TrafficLight(40, Color.red, 10, 10, 10)]
-		cars = [Car(2, 10, Direction.left, 1, False, 50)]
+		cars = [Car(2, 10, Direction.left, 1, False, 50), Car(2, 15, Direction.right, 0, True, 50), Car(1, 20, Direction.left, 0, True, 50), Car(2, 35, Direction.right, 0, True, 50)]
 		track = Track(50, cars, traffic_lights, None, None)
 		pg.init()
 		screen = pg.display.set_mode((680, 680))

@@ -8,6 +8,8 @@ class Car:
 		self.parked = parked
 
 	def step(self, track):
+		if self.parked:
+			return
 		start = self.dist
 		if self.direction == Direction.left:
 			direction = 1
