@@ -5,6 +5,7 @@ from track import *
 from direction import *
 from car import *
 from pedestrian import *
+from agent import *
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -23,6 +24,20 @@ def draw_lanes(screen):
 	pg.draw.line(screen, BLACK, (170,0), (170,680), 1)
 	pg.draw.line(screen, BLACK, (340,0), (340,680), 1)
 	pg.draw.line(screen, BLACK, (510,0), (510,680), 1)
+
+def draw_agent(screen, agent, track):
+	lane = agent.lane
+	loc = agent.dist
+	direction = agent.direction
+	x = 0
+	if direction == Direction.right:
+		x += 340
+	if lane == 2:
+		x += 170
+	x+= 50
+	y = (680 * loc)/track.length
+	#rect takes in x,y,width,height
+	pg.draw.rect(screen, AGENTCOLOR, (x, y, 50, 680/track.length))	
 
 def draw_lights(screen, traffic_lights, track):
 	for light in traffic_lights:
@@ -70,7 +85,7 @@ def draw_pedestrians(screen, pedestrians, track):
 
 
 def main():
-		traffic_lights = [TrafficLight(10, Color.green, 10, 5, 40), TrafficLight(40, Color.red, 10, 5, 35)]
+		traffic_lights = [TrafficLight(10, Color.green, 15, 5, 10), TrafficLight(40, Color.red, 10, 5, 15)]
 		pedestrians = []
 		pedestrians.append(Pedestrian(0.5, Direction.left, 10))
 		pedestrians.append(Pedestrian(0.5, Direction.right, 10))
@@ -88,7 +103,8 @@ def main():
 		cars.append(Car(1, 20, Direction.left, 0, True, 50))
 		cars.append(Car(2, 35, Direction.right, 0, True, 50))
 
-		track = Track(50, cars, traffic_lights, pedestrians, None)
+		agent = Agent(2, 45, Direction.right, 0, 50)
+		track = Track(50, cars, traffic_lights, pedestrians, agent)
 		pg.init()
 		screen = pg.display.set_mode((680, 680))
 		pg.display.set_caption("Traffic Simulator")
@@ -126,16 +142,14 @@ def main():
 			draw_lights(screen, track.traffic_lights, track)
 			draw_cars(screen, cars, track)
 			draw_pedestrians(screen, pedestrians, track)
+			draw_agent(screen, agent, track)
 		    # --- Go ahead and update the screen with what we've drawn.
 			delay = 250
-			# if agent.get_loc() == self.goal:
-			# 	delay = 680
-			# 	done = True
+
 			pg.display.flip()
 		    # --- Limit to 60 frames per second
 			clock.tick(60)
 			pg.time.delay(delay)
-			# wait
 
 if __name__ == '__main__':
 	main()
