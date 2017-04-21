@@ -36,16 +36,16 @@ class Car:
 	def get_signal_ahead(self, track):
 		ahead = []
 		for signal in track.traffic_lights:
-			if self.direction != Direction.left:
-				if signal.loc < self.dist:
+			if self.direction == Direction.left:
+				if self.dist < signal.loc:
 					ahead.append(signal) 
 			else:
-				if signal.loc > self.dist:
+				if self.dist > signal.loc:
 					ahead.append(signal)
 		if len(ahead) == 0:
 			return None
 		closest_signal = ahead[0]
-		if self.direction != Direction.left:
+		if self.direction == Direction.left:
 			for signal in ahead:
 				if signal.loc < closest_signal.loc:
 					closest_signal = signal
