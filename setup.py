@@ -57,7 +57,7 @@ def draw_pedestrians(screen, pedestrians, track):
 		loc = person.location
 		x = 0
 		if not (lane == -1 or lane == 3):
-			if self.side == Direction.left:
+			if person.side == Direction.left:
 				if lane == 2:
 					x += 170
 			else:
@@ -65,8 +65,8 @@ def draw_pedestrians(screen, pedestrians, track):
 				if lane == 2:
 					x += 170
 			x += 50
-			y = 680/track.length * loc
-			pg.draw.circle(screen, DEEPPINK, (x,y), 50)
+			y = 680/track.length * loc + 18
+			pg.draw.circle(screen, DEEPPINK, (x,y), 10)
 
 
 def main():
@@ -119,9 +119,6 @@ def main():
 			draw_lights(screen, track.traffic_lights, track)
 			draw_cars(screen, cars, track)
 			draw_pedestrians(screen, pedestrians, track)
-			# self.draw_agent(agent)
-			# self.draw_boxes()
-			# self.draw_rewards()
 		    # --- Go ahead and update the screen with what we've drawn.
 			# reward += self.reward_mat[agent.get_loc()]
 			# self.recording.append(agent.get_loc())

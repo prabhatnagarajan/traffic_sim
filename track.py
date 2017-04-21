@@ -11,4 +11,6 @@ class Track:
 			car.step(self)
 		for light in self.traffic_lights:
 			light.step()
+		for person in self.pedestrians:
+			person.step(self)
 

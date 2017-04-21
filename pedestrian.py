@@ -3,6 +3,7 @@ import random
 class Pedestrian:
 	def __init__(self, spawn_prob, side, location, lane):
 		self.is_spawned = False
+		self.spawn_prob = spawn_prob
 		self.side = side
 		if self.side == Direction.left:
 			self.direction = Direction.right
@@ -12,7 +13,7 @@ class Pedestrian:
 		self.lane = lane
 
 	def step(self, track):
-		if is_spawned:
+		if self.is_spawned:
 			if self.direction == Direction.right:
 				if self.side == Direction.right:
 					if self.lane == 1:
