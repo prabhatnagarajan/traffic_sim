@@ -10,9 +10,9 @@ class Car:
 	def step(self, track):
 		start = self.dist
 		if self.direction == Direction.left:
-			direction = -1
-		else:
 			direction = 1
+		else:
+			direction = -1
 		self.dist = (self.dist + (self.speed * direction) + track.length) % track.length
 		# for pedestrian in track.pedestrians:
 		# 	collision = self.collision(start, self.dist)

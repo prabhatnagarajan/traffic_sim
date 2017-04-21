@@ -17,15 +17,13 @@ AGENTCOLOR = (255, 255, 102)
 GRAY = (128, 128, 128)
 
 
-def setup():
-	print "Do nothing"
-
 def draw_lanes(screen):
-	pg.draw.line(screen, BLACK, (250,0), (250,1000), 1)
-	pg.draw.line(screen, BLACK, (500,0), (500,1000), 1)
-	pg.draw.line(screen, BLACK, (750,0), (750,1000), 1)
+	pg.draw.line(screen, BLACK, (170,0), (170,680), 1)
+	pg.draw.line(screen, BLACK, (340,0), (340,680), 1)
+	pg.draw.line(screen, BLACK, (510,0), (510,680), 1)
 
 def draw_lights(screen, traffic_lights, track):
+	print len(traffic_lights)
 	for light in traffic_lights:
 		loc = light.loc
 		if light.color == Color.green:
@@ -33,12 +31,9 @@ def draw_lights(screen, traffic_lights, track):
 		elif light.color == Color.red:
 			color = RED
 		else:
-			print "YELLO"
 			color = YELLOW
-		x,y = 0, 1000/loc
-
-		#rect takes in x,y,width,height
-		pg.draw.rect(screen, color, (x,y,1000,25))
+		y = (680 * loc)/track.length
+		pg.draw.rect(screen, color, (0, y, 680, 25))
 
 def draw_cars(screen, cars, track):
 	for car in cars:
@@ -47,27 +42,26 @@ def draw_cars(screen, cars, track):
 		direction = car.direction
 		x = 0
 		if direction == Direction.right:
-			x += 500
+			x += 340
 		if lane == 2:
-			x += 250
-		x+= 100
-		y = 1000/(loc + 1)
+			x += 170
+		x+= 50
+		y = 680/track.length * loc
 		#rect takes in x,y,width,height
-		pg.draw.rect(screen, BLUE, (x, y, 50, 1000/track.length))
+		pg.draw.rect(screen, BLUE, (x, y, 50, 680/track.length))
 
 def main():
-		traffic_lights = [TrafficLight(20, Color.green, 10, 10, 10)]
-		cars = [Car(2, 20, Direction.left, 1, False, 25)]
-		track = Track(25, cars, traffic_lights, None, None)
+		traffic_lights = [TrafficLight(10, Color.green, 10, 10, 10), TrafficLight(40, Color.red, 10, 10, 10)]
+		cars = [Car(2, 10, Direction.left, 1, False, 50)]
+		track = Track(50, cars, traffic_lights, None, None)
 		pg.init()
-		screen = pg.display.set_mode((1000, 1000))
+		screen = pg.display.set_mode((680, 680))
 		pg.display.set_caption("Traffic Simulator")
 		track_len = 100
 		#fill with white
 		done = False
-		lane_width = 1000/4
+		lane_width = 680/4
 		clock = pg.time.Clock()
-		# agent = self.agent
 		# If you want a background image, replace this clear with blit'ing the
 	    # background image.
 		screen.fill(GRAY)
@@ -104,12 +98,10 @@ def main():
 		    # --- Go ahead and update the screen with what we've drawn.
 			# reward += self.reward_mat[agent.get_loc()]
 			# self.recording.append(agent.get_loc())
-			delay = 1000
+			delay = 680
 			# if agent.get_loc() == self.goal:
-			# 	delay = 1000
+			# 	delay = 680
 			# 	done = True
-			# 	#save rewards
-				#save recordings
 			pg.display.flip()
 		    # --- Limit to 60 frames per second
 			clock.tick(60)
