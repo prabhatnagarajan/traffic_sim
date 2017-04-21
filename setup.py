@@ -103,7 +103,6 @@ def main():
 	 
 	    # --- Drawing code should go here
 		pg.display.flip()
-		# self.recording.append(self.start)
 		reward = 0.0
 		while not done:
 			for event in pg.event.get():
@@ -128,8 +127,6 @@ def main():
 			draw_cars(screen, cars, track)
 			draw_pedestrians(screen, pedestrians, track)
 		    # --- Go ahead and update the screen with what we've drawn.
-			# reward += self.reward_mat[agent.get_loc()]
-			# self.recording.append(agent.get_loc())
 			delay = 250
 			# if agent.get_loc() == self.goal:
 			# 	delay = 680

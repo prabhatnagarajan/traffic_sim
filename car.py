@@ -24,8 +24,43 @@ class Car:
 				speed = min(speed, 1)
 			if signal.color == Color.red and signal.loc == self.dist + direction:
 				speed = 0
+		car_ahead = self.cars_ahead(track)
+		if not (car_ahead is None) and not self.is_at_light(track):
+			speed = 0
 		self.dist = (self.dist + (speed * direction) + track.length) % track.length
 
+	def is_at_light(self, track):
+		for light in track.traffic_lights:
+			if light.loc == self.dist:
+				return True
+		return False
+
+	def cars_ahead(self, track):
+		if self.direction == Direction.left:
+			direction = 1
+		else:
+			direction = -1
+		ahead= []
+		for car in track.cars:
+			if car.direction == self.direction and car.lane == self.lane:
+				if self.direction == Direction.left:
+					if car.dist > self.dist and car.dist < self.dist + 5:
+						ahead.append(car)
+				else:
+					if car.dist < self.dist and car.dist > self.dist - 5:
+						ahead.append(car)
+		if len(ahead) == 0:
+			return None
+		closest_car = ahead[0]
+		if self.direction == Direction.left:
+			for car in ahead:
+				if car.dist < closest_car.dist:
+					closest_car = car
+		else:
+			for car in ahead:
+				if car.dist > closest_car.dist:
+					closest_car = car
+		return closest_car
 
 	def collision(self, start, new, location):
 		if new > start:
