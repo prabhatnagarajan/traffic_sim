@@ -16,7 +16,7 @@ GOALCOLOR = (18, 236, 229)
 STARTCOLOR = (240, 134, 28)
 AGENTCOLOR = (255, 255, 102)
 GRAY = (128, 128, 128)
-DEEPPINK = (255,20,147)
+VIOLET = (148,0,211)
 
 
 def draw_lanes(screen):
@@ -56,7 +56,7 @@ def draw_pedestrians(screen, pedestrians, track):
 		lane = person.lane
 		loc = person.location
 		x = 0
-		if not (lane == -1 or lane == 3):
+		if not (lane == 0 or lane == 3):
 			if person.side == Direction.left:
 				if lane == 2:
 					x += 170
@@ -64,14 +64,14 @@ def draw_pedestrians(screen, pedestrians, track):
 				x += 340
 				if lane == 2:
 					x += 170
-			x += 50
+			x += 85
 			y = 680/track.length * loc + 18
-			pg.draw.circle(screen, DEEPPINK, (x,y), 10)
+			pg.draw.circle(screen, VIOLET, (x,y), 10)
 
 
 def main():
 		traffic_lights = [TrafficLight(10, Color.green, 10, 10, 10), TrafficLight(40, Color.red, 10, 10, 10)]
-		pedestrians = [Pedestrian(0.1, Direction.left, 10, 1)]
+		pedestrians = [Pedestrian(1.0, Direction.left, 10)]
 		cars = []
 		cars.append(Car(2, 10, Direction.left, 1, False, 50))
 

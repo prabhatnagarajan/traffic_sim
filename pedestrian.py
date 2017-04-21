@@ -1,7 +1,8 @@
 from direction import *
+from color import *
 import random
 class Pedestrian:
-	def __init__(self, spawn_prob, side, location, lane):
+	def __init__(self, spawn_prob, side, location):
 		self.is_spawned = False
 		self.spawn_prob = spawn_prob
 		self.side = side
@@ -10,7 +11,10 @@ class Pedestrian:
 		else:
 			self.direction = Direction.left
 		self.location = location
-		self.lane = lane
+		if self.side == Direction.left:
+			self.lane = 0
+		else:
+			self.lane = 3
 
 	def step(self, track):
 		if self.is_spawned:
@@ -31,10 +35,36 @@ class Pedestrian:
 						self.lane = 1
 						self.side = Direction.right 
 			else:
-				print "Damn"
+				if self.side == Direction.right:
+					if self.lane == 3:
+						self.lane = 2
+					elif self.lane == 2:
+						self.lane = 1
+					else:
+						self.lane = 2
+						self.side = Direction.left
+				else:
+					if self.lane == 2:
+						self.lane = 1
+					else:
+						self.lane = 0
+						self.direction = Direction.right
+						self.is_spawned = False 
 		else:
+			red = False
+			for signal in track.traffic_lights:
+				if signal.loc == self.location:
+					if signal.color == Color.red and (signal.red_time - signal.counter) >= 4:
+						red = True
+						break
 			if random.random() < self.spawn_prob:
-				is_spawned = True
+				if red:
+					self.is_spawned = True
+				else:
+					if random.random() < 0.03:
+						self.is_spawned = True
+
+
 
 
 
