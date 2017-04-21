@@ -4,6 +4,7 @@ from traffic_light import *
 from track import *
 from direction import *
 from car import *
+from pedestrian import *
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -15,6 +16,7 @@ GOALCOLOR = (18, 236, 229)
 STARTCOLOR = (240, 134, 28)
 AGENTCOLOR = (255, 255, 102)
 GRAY = (128, 128, 128)
+DEEPPINK = (255,20,147)
 
 
 def draw_lanes(screen):
@@ -49,16 +51,36 @@ def draw_cars(screen, cars, track):
 		#rect takes in x,y,width,height
 		pg.draw.rect(screen, BLUE, (x, y, 50, 680/track.length))
 
+def draw_pedestrians(screen, pedestrians, track):
+	for person in pedestrians:
+		lane = person.lane
+		loc = person.location
+		x = 0
+		if not (lane == -1 or lane == 3):
+			if self.side == Direction.left:
+				if lane == 2:
+					x += 170
+			else:
+				x += 340
+				if lane == 2:
+					x += 170
+			x += 50
+			y = 680/track.length * loc
+			pg.draw.circle(screen, DEEPPINK, (x,y), 50)
+
+
 def main():
 		traffic_lights = [TrafficLight(10, Color.green, 10, 10, 10), TrafficLight(40, Color.red, 10, 10, 10)]
+		pedestrians = [Pedestrian(0.1, Direction.left, 10, 1)]
 		cars = []
 		cars.append(Car(2, 10, Direction.left, 1, False, 50))
+
 		#Parked Cars
 		cars.append(Car(2, 15, Direction.right, 0, True, 50))
 		cars.append(Car(1, 20, Direction.left, 0, True, 50))
 		cars.append(Car(2, 35, Direction.right, 0, True, 50))
 
-		track = Track(50, cars, traffic_lights, None, None)
+		track = Track(50, cars, traffic_lights, pedestrians, None)
 		pg.init()
 		screen = pg.display.set_mode((680, 680))
 		pg.display.set_caption("Traffic Simulator")
@@ -96,7 +118,7 @@ def main():
 
 			draw_lights(screen, track.traffic_lights, track)
 			draw_cars(screen, cars, track)
-
+			draw_pedestrians(screen, pedestrians, track)
 			# self.draw_agent(agent)
 			# self.draw_boxes()
 			# self.draw_rewards()
