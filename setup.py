@@ -51,7 +51,13 @@ def draw_cars(screen, cars, track):
 
 def main():
 		traffic_lights = [TrafficLight(10, Color.green, 10, 10, 10), TrafficLight(40, Color.red, 10, 10, 10)]
-		cars = [Car(2, 10, Direction.left, 1, False, 50), Car(2, 15, Direction.right, 0, True, 50), Car(1, 20, Direction.left, 0, True, 50), Car(2, 35, Direction.right, 0, True, 50)]
+		cars = []
+		cars.append(Car(2, 10, Direction.left, 1, False, 50))
+		#Parked Cars
+		cars.append(Car(2, 15, Direction.right, 0, True, 50))
+		cars.append(Car(1, 20, Direction.left, 0, True, 50))
+		cars.append(Car(2, 35, Direction.right, 0, True, 50))
+
 		track = Track(50, cars, traffic_lights, None, None)
 		pg.init()
 		screen = pg.display.set_mode((680, 680))
