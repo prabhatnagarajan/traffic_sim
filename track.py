@@ -5,3 +5,10 @@ class Track:
 		self.traffic_lights = traffic_lights
 		self.pedestrians = pedestrians
 		self.agent = agent
+
+	def step(self):
+		for car in self.cars:
+			car.step(self)
+		for light in self.traffic_lights:
+			light.step()
+
