@@ -34,7 +34,7 @@ class Agent:
 
 	def step(self, track):
 		if self.training:
-			self.train(track)
+			return self.train(track)
 		else:
 			print "combining all policies"
 
@@ -48,8 +48,13 @@ class Agent:
 			speed, lane = random.choice(self.actions)
 		else:
 			speed, lane = self.actions[np.argmax(Q[state,:])]
+		return self.act(speed, lane, track)
+
+
+	def act(self, speed, lane, track):
 		self.dist = (self.dist - speed + track.length) % track.length
 		self.lane = lane
+		return True
 
 	def get_state(self, track):
 		if self.module_num == 1:

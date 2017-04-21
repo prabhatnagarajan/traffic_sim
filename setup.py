@@ -106,51 +106,54 @@ def main():
 		agent = Agent(1, 25, Direction.right, 0, 50, True, 1)
 		cars.append(agent)
 		track = Track(50, cars, traffic_lights, pedestrians, agent)
-		pg.init()
-		screen = pg.display.set_mode((680, 680))
-		pg.display.set_caption("Traffic Simulator")
-		track_len = 100
-		#fill with white
-		done = False
-		lane_width = 680/4
-		clock = pg.time.Clock()
-		# If you want a background image, replace this clear with blit'ing the
-	    # background image.
-		screen.fill(GRAY)
-	 
-	    # --- Drawing code should go here
-		pg.display.flip()
-		reward = 0.0
-		while not done:
-			for event in pg.event.get():
-				if event.type == pg.QUIT:
-					done = True
-		 
-		    # --- Game logic should go here
-		    # --- Screen-clearing code goes here
-		 
-		    # Here, we clear the screen to white. Don't put other drawing commands
-		    # above this, or they will be erased with this command.
-		 
-		    # If you want a background image, replace this clear with blit'ing the
+		for i in range(3):
+			pg.init()
+			screen = pg.display.set_mode((680, 680))
+			pg.display.set_caption("Traffic Simulator")
+			track_len = 100
+			#fill with white
+			done = False
+			lane_width = 680/4
+			clock = pg.time.Clock()
+			# If you want a background image, replace this clear with blit'ing the
 		    # background image.
 			screen.fill(GRAY)
 		 
-		 	track.step()
 		    # --- Drawing code should go here
-			draw_lanes(screen)
-
-			draw_lights(screen, track.traffic_lights, track)
-			draw_cars(screen, cars, track)
-			draw_pedestrians(screen, pedestrians, track)
-			draw_agent(screen, agent, track)
-		    # --- Go ahead and update the screen with what we've drawn.
-			delay = 100
-
 			pg.display.flip()
-		    # --- Limit to 60 frames per second
-			clock.tick(60)
-			pg.time.delay(delay)
+			reward = 0.0
+			while not done:
+				for event in pg.event.get():
+					if event.type == pg.QUIT:
+						done = True
+			 
+			    # --- Game logic should go here
+			    # --- Screen-clearing code goes here
+			 
+			    # Here, we clear the screen to white. Don't put other drawing commands
+			    # above this, or they will be erased with this command.
+			 
+			    # If you want a background image, replace this clear with blit'ing the
+			    # background image.
+				screen.fill(GRAY)
+			 
+			 	if not track.step():
+			 		print "DONE"
+			 		done = True
+			    # --- Drawing code should go here
+				draw_lanes(screen)
+
+				draw_lights(screen, track.traffic_lights, track)
+				draw_cars(screen, cars, track)
+				draw_pedestrians(screen, pedestrians, track)
+				draw_agent(screen, agent, track)
+			    # --- Go ahead and update the screen with what we've drawn.
+				delay = 100
+
+				pg.display.flip()
+			    # --- Limit to 60 frames per second
+				clock.tick(60)
+				pg.time.delay(delay)
 
 if __name__ == '__main__':
 	main()
