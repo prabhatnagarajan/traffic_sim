@@ -24,18 +24,33 @@ class Car:
 				speed = min(speed, 1)
 			if signal.color == Color.red and signal.loc == self.dist + direction:
 				speed = 0
-		car_ahead = self.cars_ahead(track)
+		car_ahead = self.cars_ahead(5, track)
 		if not (car_ahead is None) and not self.is_at_light(track):
-			speed = 0
+			if not self.attempt_switch(speed, track):
+				if car_ahead.dist == self.dist + direction:
+					speed = 0
 		self.dist = (self.dist + (speed * direction) + track.length) % track.length
 
+	def attempt_switch(self, speed, track):
+		self.change_lanes()
+		if not (self.cars_ahead(speed, track) is None):
+			self.change_lanes()
+			return False
+		return True
+
+	def change_lanes(self):
+		if self.lane == 1:
+			self.lane = 2
+		else:
+			self.lane = 1
+			
 	def is_at_light(self, track):
 		for light in track.traffic_lights:
 			if light.loc == self.dist:
 				return True
 		return False
 
-	def cars_ahead(self, track):
+	def cars_ahead(self, lookahead, track):
 		if self.direction == Direction.left:
 			direction = 1
 		else:
@@ -44,10 +59,10 @@ class Car:
 		for car in track.cars:
 			if car.direction == self.direction and car.lane == self.lane:
 				if self.direction == Direction.left:
-					if car.dist > self.dist and car.dist < self.dist + 5:
+					if car.dist > self.dist and car.dist < self.dist + lookahead:
 						ahead.append(car)
 				else:
-					if car.dist < self.dist and car.dist > self.dist - 5:
+					if car.dist < self.dist and car.dist > self.dist - lookahead:
 						ahead.append(car)
 		if len(ahead) == 0:
 			return None
