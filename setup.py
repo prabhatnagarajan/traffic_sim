@@ -65,15 +65,23 @@ def draw_pedestrians(screen, pedestrians, track):
 				if lane == 2:
 					x += 170
 			x += 85
-			y = 680/track.length * loc + 18
+			y = (680 * loc)/track.length + 12
 			pg.draw.circle(screen, VIOLET, (x,y), 10)
 
 
 def main():
 		traffic_lights = [TrafficLight(10, Color.green, 10, 10, 10), TrafficLight(40, Color.red, 10, 10, 10)]
-		pedestrians = [Pedestrian(0.5, Direction.left, 10)]
+		pedestrians = []
+		pedestrians.append(Pedestrian(0.5, Direction.left, 10))
+		pedestrians.append(Pedestrian(0.5, Direction.right, 10))
+		pedestrians.append(Pedestrian(0.5, Direction.left, 40))
+		pedestrians.append(Pedestrian(0.5, Direction.right, 40))
 		cars = []
 		cars.append(Car(2, 10, Direction.left, 1, False, 50))
+		cars.append(Car(1, 10, Direction.left, 3, False, 50))
+		cars.append(Car(2, 10, Direction.left, 2, False, 50))
+		cars.append(Car(1, 10, Direction.right, 1, False, 50))
+		cars.append(Car(2, 10, Direction.right, 2, False, 50))
 
 		#Parked Cars
 		cars.append(Car(2, 15, Direction.right, 0, True, 50))
