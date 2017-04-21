@@ -22,7 +22,7 @@ class Car:
 		if not (signal is None):
 			if signal.color == Color.yellow or signal.color == Color.red:
 				speed = min(speed, 1)
-			if signal.color == Color.red and signal.loc == self.dist + 1:
+			if signal.color == Color.red and signal.loc == self.dist + direction:
 				speed = 0
 		self.dist = (self.dist + (speed * direction) + track.length) % track.length
 

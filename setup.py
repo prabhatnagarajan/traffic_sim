@@ -34,7 +34,7 @@ def draw_lights(screen, traffic_lights, track):
 		else:
 			color = YELLOW
 		y = (680 * loc)/track.length
-		pg.draw.rect(screen, color, (0, y, 680, 25))
+		pg.draw.rect(screen, color, (0, y, 680, 680/track.length))
 
 def draw_cars(screen, cars, track):
 	for car in cars:
@@ -65,8 +65,8 @@ def draw_pedestrians(screen, pedestrians, track):
 				if lane == 2:
 					x += 170
 			x += 85
-			y = (680 * loc)/track.length + 12
-			pg.draw.circle(screen, VIOLET, (x,y), 10)
+			y = (680 * loc)/track.length + 7
+			pg.draw.circle(screen, VIOLET, (x,y), 5)
 
 
 def main():
