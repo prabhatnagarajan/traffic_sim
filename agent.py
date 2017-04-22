@@ -62,23 +62,24 @@ class Agent:
 		if self.gmq:
 			sum_val = 0.0
 			qs = []
-			for action in self.actions:
-				for module in (1,5):
+			for action in range(len(self.actions)):
+				for module in range(1,5):
 					states = self.state_spaces[module]
 					Q = self.q_funcs[module]
 					self.module_num = module
 					state = self.get_state(track)
 					sum_val += Q[state, action]
 			qs.append(sum_val)
-			best_action = qs.index(max(qs))
+			qs = np.array(qs)
+			best_action = np.argmax(qs)
 			speed, lane =self.actions[best_action]
 			reward, done = self.act(speed, lane, track)
 			return (state, action, reward, done)
 		else:
 			maxq = -10000
 			best_action = 0
-			for action in self.actions:
-				for module in (1,5):
+			for action in range(len(self.actions)):
+				for module in range(1,5):
 					states = self.state_spaces[module]
 					Q = self.q_funcs[module]
 					self.module_num = module

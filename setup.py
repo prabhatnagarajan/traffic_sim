@@ -154,48 +154,48 @@ def main():
 			print "Training Module " + str(module_num)
 			track.agent.module_num = module_num
 			rewards = []
-			for i in range(5):
+			for i in range(500):
 				print "EPISODE " + str(i + 1)
 
-				# pg.init()
-				# screen = pg.display.set_mode((680, 680))
-				# pg.display.set_caption("Traffic Simulator")
+				pg.init()
+				screen = pg.display.set_mode((680, 680))
+				pg.display.set_caption("Traffic Simulator")
 
 				track_len = 100
 				done = False
 				lane_width = 680/4
 
-				# clock = pg.time.Clock()
-				# screen.fill(GRAY)
-				# pg.display.flip()
+				clock = pg.time.Clock()
+				screen.fill(GRAY)
+				pg.display.flip()
 
 				total_reward = 0.0
 				for j in range(300):
-					# for event in pg.event.get():
-					# 	if event.type == pg.QUIT:
-					# 		done = True
-					# screen.fill(GRAY)
+					for event in pg.event.get():
+						if event.type == pg.QUIT:
+							done = True
+					screen.fill(GRAY)
 				 
 				 	next_state, next_action, next_reward, done = track.step()
 				 	total_reward += (0.9 * next_reward)
-				 	# if done:
-				 	# 	track = reset(track, module_num)
-				 	# 	state, action, reward = None, None, None
+				 	if done:
+				 		track = reset(track, module_num)
+				 		state, action, reward = None, None, None
 					if not (state is None or action is None or reward is None):
 						track.agent.sarsa(state, action, reward, next_state, next_action, False)
 				 	state = next_state
 				 	action = next_action
 				 	reward = next_reward
 
-					# draw_lanes(screen)
-					# draw_lights(screen, track.traffic_lights, track)
-					# draw_cars(screen, track.cars, track)
-					# draw_pedestrians(screen, track.pedestrians, track)
-					# draw_agent(screen, track.agent, track)
-					# delay = 0
-					# pg.display.flip()
-					# clock.tick(60)
-					# pg.time.delay(delay)
+					draw_lanes(screen)
+					draw_lights(screen, track.traffic_lights, track)
+					draw_cars(screen, track.cars, track)
+					draw_pedestrians(screen, track.pedestrians, track)
+					draw_agent(screen, track.agent, track)
+					delay = 0
+					pg.display.flip()
+					clock.tick(60)
+					pg.time.delay(delay)
 
 				track = reset(track, module_num)
 				state, action, reward = None, None, None
