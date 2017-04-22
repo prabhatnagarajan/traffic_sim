@@ -15,5 +15,5 @@ class Track:
 			light.step()
 		for person in self.pedestrians:
 			person.step(self)
-		return self.agent.step(self)
+		return self.agent.step(self)		
 

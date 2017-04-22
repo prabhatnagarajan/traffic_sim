@@ -1,6 +1,7 @@
 import numpy as np
 import random
 from color import *
+from direction import *
 from pdb import set_trace
 
 class Agent:
@@ -19,9 +20,9 @@ class Agent:
 		num_actions = len(self.actions)
 		self.q_funcs = dict()
 		self.q_funcs[1] = np.zeros((50, num_actions))
-		# self.q_funcs[2] = np.zeros((len(state_1), num_actions))
-		# self.q_funcs[3] = np.zeros((len(state_1), num_actions))
-		# self.q_funcs[4] = np.zeros((len(state_1), num_actions))
+		self.q_funcs[2] = np.zeros((50 * 3 * 3, num_actions))
+		self.q_funcs[3] = np.zeros((50 * 2, num_actions))
+		self.q_funcs[4] = np.zeros((800, num_actions))
 		self.discounts = dict()
 		self.discounts[1] = 0.9
 		self.discounts[2] = 0.9
@@ -34,6 +35,9 @@ class Agent:
 		self.epsilons[4] = 0.075
 		self.state_spaces = dict()
 		self.state_spaces[1] = range(50)
+		self.state_spaces[2] = range(50 * 3 * 3)
+		self.state_spaces[3] = range(50 * 2)
+		self.state_spaces[4] = range(800)
 
 	def step(self, track):
 		if self.training:
@@ -42,17 +46,30 @@ class Agent:
 			print "combining all policies"
 
 	def train(self, track):
-		discount = self.discounts[self.module_num]
 		states = self.state_spaces[self.module_num]
 		epsilon = self.epsilons[self.module_num]
 		Q = self.q_funcs[self.module_num]
 		state = self.get_state(track)
 		#epsilon greedy
-		if random.random() < epsilon:
-			speed, lane = random.choice(self.actions)
+		action = self.choose_action(epsilon, Q, state)
+		speed, lane =self.actions[action]
+		reward, done = self.act(speed, lane, track)
+		next_state = self.get_state(track)
+		return (state, action, reward, done)
+
+	def sarsa(self, state, action, reward, next_state, next_action, done):
+		discount = self.discounts[self.module_num]
+		Q = self.q_funcs[self.module_num]
+		if not done:
+			Q[state, action] = Q[state, action] + 0.1 * (reward + discount * Q[next_state, next_action] - Q[state, action])
 		else:
-			speed, lane = self.actions[np.argmax(Q[state,:])]
-		return self.act(speed, lane, track)
+			Q[state, action] = Q[state, action] + 0.1 * (reward + discount * 0 - Q[state, action])
+
+	def choose_action(self, epsilon, Q, state):
+		if random.random() < epsilon:
+			return random.randint(0, len(self.actions) - 1)
+		else:
+			return np.argmax(Q[state,:])
 
 	def act(self, speed, lane, track):
 		ran_red = self.is_run_red_light(speed, lane, track)
@@ -66,10 +83,21 @@ class Agent:
 			print "Ran over a person!!!"
 		self.dist = (self.dist - speed + track.length) % track.length
 		self.lane = lane
-		# if self.module_num == 1:
-		# if self.module_num == 2:
-		# if self.module_num == 3:
-		return not (ran_red or car_collision or ped_collision)
+		if self.module_num == 1:
+			reward = float(speed)
+		if self.module_num == 2:
+			reward = 0.01
+			if ran_red:
+				reward = -10.0
+		if self.module_num == 3:
+			reward = 0.01
+			if car_collision:
+				reward = -20.0
+		if self.module_num == 4:
+			reward = 0.01
+			if ped_collision:
+				reward = -100.0
+		return (reward, (ran_red or car_collision or ped_collision))
 
 	def is_car_collision(self, speed, lane, track):
 		positions = range((self.dist - speed + track.length) % track.length, self.dist + 1)
@@ -102,3 +130,52 @@ class Agent:
 	def get_state(self, track):
 		if self.module_num == 1:
 			return self.dist
+		if self.module_num == 2:
+			value = self.dist
+			value = value * 9
+			val1 = 0
+			val2 = 0
+			if track.traffic_lights[0] == Color.yellow:
+				val1 = 1
+			if track.traffic_lights[0] == Color.red:
+				val1 = 2
+			if track.traffic_lights[1] == Color.yellow:
+				val2 = 1
+			if track.traffic_lights[1] == Color.red:
+				val2 = 2
+			value += val1 * 3 
+			value += val2
+			return value
+		if self.module_num == 3:
+			return (self.lane - 1) * 50 + self.dist
+		if self.module_num == 4:
+			ped1 = False
+			ped2 = False
+			ped3 = False
+			ped4 = False
+			for person in track.pedestrians:
+				if person.side == Direction.right:
+					if person.lane == 1:
+						if person.location == 10:
+							ped1 = True
+						if person.location == 40:
+							ped2 = True
+					if person.lane == 1:
+						if person.location == 10:
+							ped3 = True
+						if person.location == 40:
+							ped4 = True
+			value = 0
+			if ped1:
+				value += 400
+			if ped2:
+				value += 200
+			if ped3:
+				value += 100
+			if ped4:
+				value += 50
+			value += self.dist
+			return value
+
+
+

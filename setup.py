@@ -34,7 +34,7 @@ def setup():
 	cars.append(Car(2, 10, Direction.right, 2, False, 50))
 
 	#Parked Cars
-	cars.append(Car(2, 15, Direction.right, 0, True, 50))
+	cars.append(Car(1, 15, Direction.right, 0, True, 50))
 	cars.append(Car(1, 20, Direction.left, 0, True, 50))
 	cars.append(Car(2, 35, Direction.right, 0, True, 50))
 
@@ -58,7 +58,7 @@ def reset(track, module_num):
 	cars.append(Car(2, 10, Direction.right, 2, False, 50))
 
 	#Parked Cars
-	cars.append(Car(2, 15, Direction.right, 0, True, 50))
+	cars.append(Car(1, 15, Direction.right, 0, True, 50))
 	cars.append(Car(1, 20, Direction.left, 0, True, 50))
 	cars.append(Car(2, 35, Direction.right, 0, True, 50))
 
@@ -144,28 +144,35 @@ def main():
 		agent = track.agent
 		pedestrians = track.pedestrians
 		traffic_lights = track.traffic_lights
+		state = None
+		action = None
+		reward = None
+		reward_lists = []
 		for module_num in range(1,5):
 			print "Training Module " + str(module_num)
-			for i in range(3):
-				pg.init()
-				screen = pg.display.set_mode((680, 680))
-				pg.display.set_caption("Traffic Simulator")
+			track.agent.module_num = module_num
+			rewards = []
+			for i in range(3000):
+				print "Episode " + str(i + 1)
+				# pg.init()
+				# screen = pg.display.set_mode((680, 680))
+				# pg.display.set_caption("Traffic Simulator")
 				track_len = 100
 				#fill with white
 				done = False
 				lane_width = 680/4
-				clock = pg.time.Clock()
+				# clock = pg.time.Clock()
 				# If you want a background image, replace this clear with blit'ing the
 			    # background image.
-				screen.fill(GRAY)
+				# screen.fill(GRAY)
 			 
 			    # --- Drawing code should go here
-				pg.display.flip()
-				reward = 0.0
+				# pg.display.flip()
+				total_reward = 0.0
 				while not done:
-					for event in pg.event.get():
-						if event.type == pg.QUIT:
-							done = True
+					# for event in pg.event.get():
+					# 	if event.type == pg.QUIT:
+					# 		done = True
 				 
 				    # --- Game logic should go here
 				    # --- Screen-clearing code goes here
@@ -175,25 +182,35 @@ def main():
 				 
 				    # If you want a background image, replace this clear with blit'ing the
 				    # background image.
-					screen.fill(GRAY)
+					# screen.fill(GRAY)
 				 
-				 	if not track.step():
+				 	next_state, next_action, next_reward, done = track.step()
+				 	total_reward += (0.9 * next_reward)
+				 	if done:
 				 		track = reset(track, module_num)
-				 		done = True
+				 		state, action, reward = None, None, None
+					if not (state is None or action is None or reward is None):
+						track.agent.sarsa(state, action, reward, next_state, next_action, done)
+					 	state = next_state
+					 	action = next_action
+					 	reward = next_reward
 				    # --- Drawing code should go here
-					draw_lanes(screen)
+					# draw_lanes(screen)
 
-					draw_lights(screen, track.traffic_lights, track)
-					draw_cars(screen, cars, track)
-					draw_pedestrians(screen, pedestrians, track)
-					draw_agent(screen, agent, track)
+					# draw_lights(screen, track.traffic_lights, track)
+					# draw_cars(screen, track.cars, track)
+					# draw_pedestrians(screen, track.pedestrians, track)
+					# draw_agent(screen, track.agent, track)
 				    # --- Go ahead and update the screen with what we've drawn.
-					delay = 100
+					delay = 0
 
-					pg.display.flip()
-				    # --- Limit to 60 frames per second
-					clock.tick(60)
-					pg.time.delay(delay)
+					# pg.display.flip()
+				 #    # --- Limit to 60 frames per second
+					# clock.tick(60)
+					# pg.time.delay(delay)
+				rewards.append(total_reward)
+			reward_lists.append(rewards)
+		set_trace()
 
 if __name__ == '__main__':
 	main()
