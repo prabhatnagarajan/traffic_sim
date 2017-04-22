@@ -19,6 +19,60 @@ AGENTCOLOR = (255, 255, 102)
 GRAY = (128, 128, 128)
 VIOLET = (148,0,211)
 
+def setup():
+	traffic_lights = [TrafficLight(10, Color.green, 15, 5, 10), TrafficLight(40, Color.red, 10, 5, 15)]
+	pedestrians = []
+	pedestrians.append(Pedestrian(0.5, Direction.left, 10))
+	pedestrians.append(Pedestrian(0.5, Direction.right, 10))
+	pedestrians.append(Pedestrian(0.5, Direction.left, 40))
+	pedestrians.append(Pedestrian(0.5, Direction.right, 40))
+	cars = []
+	cars.append(Car(2, 10, Direction.left, 1, False, 50))
+	cars.append(Car(1, 10, Direction.left, 3, False, 50))
+	cars.append(Car(2, 10, Direction.left, 2, False, 50))
+	cars.append(Car(1, 10, Direction.right, 1, False, 50))
+	cars.append(Car(2, 10, Direction.right, 2, False, 50))
+
+	#Parked Cars
+	cars.append(Car(2, 15, Direction.right, 0, True, 50))
+	cars.append(Car(1, 20, Direction.left, 0, True, 50))
+	cars.append(Car(2, 35, Direction.right, 0, True, 50))
+
+	agent = Agent(2, 25, Direction.right, 0, 50, True, 1)
+	cars.append(agent)
+	track = Track(50, cars, traffic_lights, pedestrians, agent)
+	return track
+
+def reset(track, module_num):
+	traffic_lights = [TrafficLight(10, Color.green, 15, 5, 10), TrafficLight(40, Color.red, 10, 5, 15)]
+	pedestrians = []
+	pedestrians.append(Pedestrian(0.5, Direction.left, 10))
+	pedestrians.append(Pedestrian(0.5, Direction.right, 10))
+	pedestrians.append(Pedestrian(0.5, Direction.left, 40))
+	pedestrians.append(Pedestrian(0.5, Direction.right, 40))
+	cars = []
+	cars.append(Car(2, 10, Direction.left, 1, False, 50))
+	cars.append(Car(1, 10, Direction.left, 3, False, 50))
+	cars.append(Car(2, 10, Direction.left, 2, False, 50))
+	cars.append(Car(1, 10, Direction.right, 1, False, 50))
+	cars.append(Car(2, 10, Direction.right, 2, False, 50))
+
+	#Parked Cars
+	cars.append(Car(2, 15, Direction.right, 0, True, 50))
+	cars.append(Car(1, 20, Direction.left, 0, True, 50))
+	cars.append(Car(2, 35, Direction.right, 0, True, 50))
+
+	track.agent.lane = 2
+	track.agent.dist = 25
+	track.agent.direction = Direction.right
+	track.agent.speed = 0
+	track.agent.track_len = 50
+	track.agent.training = True
+	track.agent.module_num = module_num
+
+	cars.append(track.agent)
+	track = Track(50, cars, traffic_lights, pedestrians, track.agent)
+	return track
 
 def draw_lanes(screen):
 	pg.draw.line(screen, BLACK, (170,0), (170,680), 1)
@@ -85,75 +139,61 @@ def draw_pedestrians(screen, pedestrians, track):
 
 
 def main():
-		traffic_lights = [TrafficLight(10, Color.green, 15, 5, 10), TrafficLight(40, Color.red, 10, 5, 15)]
-		pedestrians = []
-		pedestrians.append(Pedestrian(0.5, Direction.left, 10))
-		pedestrians.append(Pedestrian(0.5, Direction.right, 10))
-		pedestrians.append(Pedestrian(0.5, Direction.left, 40))
-		pedestrians.append(Pedestrian(0.5, Direction.right, 40))
-		cars = []
-		cars.append(Car(2, 10, Direction.left, 1, False, 50))
-		cars.append(Car(1, 10, Direction.left, 3, False, 50))
-		cars.append(Car(2, 10, Direction.left, 2, False, 50))
-		cars.append(Car(1, 10, Direction.right, 1, False, 50))
-		cars.append(Car(2, 10, Direction.right, 2, False, 50))
-
-		#Parked Cars
-		cars.append(Car(2, 15, Direction.right, 0, True, 50))
-		cars.append(Car(1, 20, Direction.left, 0, True, 50))
-		cars.append(Car(2, 35, Direction.right, 0, True, 50))
-
-		agent = Agent(1, 25, Direction.right, 0, 50, True, 1)
-		cars.append(agent)
-		track = Track(50, cars, traffic_lights, pedestrians, agent)
-		for i in range(3):
-			pg.init()
-			screen = pg.display.set_mode((680, 680))
-			pg.display.set_caption("Traffic Simulator")
-			track_len = 100
-			#fill with white
-			done = False
-			lane_width = 680/4
-			clock = pg.time.Clock()
-			# If you want a background image, replace this clear with blit'ing the
-		    # background image.
-			screen.fill(GRAY)
-		 
-		    # --- Drawing code should go here
-			pg.display.flip()
-			reward = 0.0
-			while not done:
-				for event in pg.event.get():
-					if event.type == pg.QUIT:
-						done = True
-			 
-			    # --- Game logic should go here
-			    # --- Screen-clearing code goes here
-			 
-			    # Here, we clear the screen to white. Don't put other drawing commands
-			    # above this, or they will be erased with this command.
-			 
-			    # If you want a background image, replace this clear with blit'ing the
+		track = setup()
+		cars = track.cars
+		agent = track.agent
+		pedestrians = track.pedestrians
+		traffic_lights = track.traffic_lights
+		for module_num in range(1,5):
+			print "Training Module " + str(module_num)
+			for i in range(3):
+				pg.init()
+				screen = pg.display.set_mode((680, 680))
+				pg.display.set_caption("Traffic Simulator")
+				track_len = 100
+				#fill with white
+				done = False
+				lane_width = 680/4
+				clock = pg.time.Clock()
+				# If you want a background image, replace this clear with blit'ing the
 			    # background image.
 				screen.fill(GRAY)
 			 
-			 	if not track.step():
-			 		print "DONE"
-			 		done = True
 			    # --- Drawing code should go here
-				draw_lanes(screen)
-
-				draw_lights(screen, track.traffic_lights, track)
-				draw_cars(screen, cars, track)
-				draw_pedestrians(screen, pedestrians, track)
-				draw_agent(screen, agent, track)
-			    # --- Go ahead and update the screen with what we've drawn.
-				delay = 100
-
 				pg.display.flip()
-			    # --- Limit to 60 frames per second
-				clock.tick(60)
-				pg.time.delay(delay)
+				reward = 0.0
+				while not done:
+					for event in pg.event.get():
+						if event.type == pg.QUIT:
+							done = True
+				 
+				    # --- Game logic should go here
+				    # --- Screen-clearing code goes here
+				 
+				    # Here, we clear the screen to white. Don't put other drawing commands
+				    # above this, or they will be erased with this command.
+				 
+				    # If you want a background image, replace this clear with blit'ing the
+				    # background image.
+					screen.fill(GRAY)
+				 
+				 	if not track.step():
+				 		track = reset(track, module_num)
+				 		done = True
+				    # --- Drawing code should go here
+					draw_lanes(screen)
+
+					draw_lights(screen, track.traffic_lights, track)
+					draw_cars(screen, cars, track)
+					draw_pedestrians(screen, pedestrians, track)
+					draw_agent(screen, agent, track)
+				    # --- Go ahead and update the screen with what we've drawn.
+					delay = 100
+
+					pg.display.flip()
+				    # --- Limit to 60 frames per second
+					clock.tick(60)
+					pg.time.delay(delay)
 
 if __name__ == '__main__':
 	main()

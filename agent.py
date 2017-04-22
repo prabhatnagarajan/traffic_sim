@@ -57,13 +57,19 @@ class Agent:
 	def act(self, speed, lane, track):
 		ran_red = self.is_run_red_light(speed, lane, track)
 		car_collision = self.is_car_collision(speed, lane, track)
+		ped_collision = self.pedestrian_collision(speed, lane, track)
 		if ran_red:	
-			print "RAND RED"
+			print "Ran a red light!!!"
 		if car_collision:
-			print "COLLISION" 
+			print "Car Crash!!!!" 
+		if ped_collision:
+			print "Ran over a person!!!"
 		self.dist = (self.dist - speed + track.length) % track.length
 		self.lane = lane
-		return True
+		# if self.module_num == 1:
+		# if self.module_num == 2:
+		# if self.module_num == 3:
+		return not (ran_red or car_collision or ped_collision)
 
 	def is_car_collision(self, speed, lane, track):
 		positions = range((self.dist - speed + track.length) % track.length, self.dist + 1)
@@ -75,7 +81,16 @@ class Agent:
 					if car.lane == lane:
 						return True
 		return False
-		
+
+	def pedestrian_collision(self, speed, lane, track):
+		positions = range((self.dist - speed + track.length) % track.length, self.dist + 1)
+		for person in track.pedestrians:
+			if person.side == self.direction:
+				if person.location in positions:
+					if person.lane == lane:
+						return True
+		return False
+
 	def is_run_red_light(self, speed, lane, track):
 		positions = range((self.dist - speed + track.length) % track.length, self.dist + 1)
 		for light in track.traffic_lights:
