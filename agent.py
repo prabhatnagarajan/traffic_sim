@@ -38,12 +38,14 @@ class Agent:
 		self.state_spaces[2] = range(50 * 3 * 3)
 		self.state_spaces[3] = range(50 * 2)
 		self.state_spaces[4] = range(800)
+		self.gmq = False
+		self.topq = False
 
 	def step(self, track):
 		if self.training:
 			return self.train(track)
 		else:
-			print "combining all policies"
+			return self.test(track)
 
 	def train(self, track):
 		states = self.state_spaces[self.module_num]
@@ -54,16 +56,47 @@ class Agent:
 		action = self.choose_action(epsilon, Q, state)
 		speed, lane =self.actions[action]
 		reward, done = self.act(speed, lane, track)
-		next_state = self.get_state(track)
 		return (state, action, reward, done)
+
+	def test(self, track):
+		if self.gmq:
+			sum_val = 0.0
+			qs = []
+			for action in self.actions:
+				for module in (1,5):
+					states = self.state_spaces[module]
+					Q = self.q_funcs[module]
+					self.module_num = module
+					state = self.get_state(track)
+					sum_val += Q[state, action]
+			qs.append(sum_val)
+			best_action = qs.index(max(qs))
+			speed, lane =self.actions[best_action]
+			reward, done = self.act(speed, lane, track)
+			return (state, action, reward, done)
+		else:
+			maxq = -10000
+			best_action = 0
+			for action in self.actions:
+				for module in (1,5):
+					states = self.state_spaces[module]
+					Q = self.q_funcs[module]
+					self.module_num = module
+					state = self.get_state(track)
+					if Q[state, action] > maxq:
+						maxq = Q[state, action]
+						best_action = action
+			speed, lane = self.actions[best_action]
+			reward, done = self.act(speed, lane, track)
+			return (state, action, reward, done)
 
 	def sarsa(self, state, action, reward, next_state, next_action, done):
 		discount = self.discounts[self.module_num]
 		Q = self.q_funcs[self.module_num]
 		if not done:
-			Q[state, action] = Q[state, action] + 0.1 * (reward + discount * Q[next_state, next_action] - Q[state, action])
+			self.q_funcs[self.module_num][state, action] = Q[state, action] + 0.1 * (reward + discount * Q[next_state, next_action] - Q[state, action])
 		else:
-			Q[state, action] = Q[state, action] + 0.1 * (reward + discount * 0 - Q[state, action])
+			self.q_funcs[self.module_num][state, action] = Q[state, action] + 0.1 * (reward + discount * 0 - Q[state, action])
 
 	def choose_action(self, epsilon, Q, state):
 		if random.random() < epsilon:
@@ -75,12 +108,6 @@ class Agent:
 		ran_red = self.is_run_red_light(speed, lane, track)
 		car_collision = self.is_car_collision(speed, lane, track)
 		ped_collision = self.pedestrian_collision(speed, lane, track)
-		if ran_red:	
-			print "Ran a red light!!!"
-		if car_collision:
-			print "Car Crash!!!!" 
-		if ped_collision:
-			print "Ran over a person!!!"
 		self.dist = (self.dist - speed + track.length) % track.length
 		self.lane = lane
 		if self.module_num == 1:

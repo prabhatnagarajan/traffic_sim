@@ -6,6 +6,8 @@ from direction import *
 from car import *
 from pedestrian import *
 from agent import *
+import matplotlib.pyplot as plt
+
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -67,7 +69,7 @@ def reset(track, module_num):
 	track.agent.direction = Direction.right
 	track.agent.speed = 0
 	track.agent.track_len = 50
-	track.agent.training = True
+	track.agent.training = track.agent.training
 	track.agent.module_num = module_num
 
 	cars.append(track.agent)
@@ -152,65 +154,81 @@ def main():
 			print "Training Module " + str(module_num)
 			track.agent.module_num = module_num
 			rewards = []
-			for i in range(3000):
-				print "Episode " + str(i + 1)
+			for i in range(5):
+				print "EPISODE " + str(i + 1)
+
 				# pg.init()
 				# screen = pg.display.set_mode((680, 680))
 				# pg.display.set_caption("Traffic Simulator")
+
 				track_len = 100
-				#fill with white
 				done = False
 				lane_width = 680/4
+
 				# clock = pg.time.Clock()
-				# If you want a background image, replace this clear with blit'ing the
-			    # background image.
 				# screen.fill(GRAY)
-			 
-			    # --- Drawing code should go here
 				# pg.display.flip()
+
 				total_reward = 0.0
-				while not done:
+				for j in range(300):
 					# for event in pg.event.get():
 					# 	if event.type == pg.QUIT:
 					# 		done = True
-				 
-				    # --- Game logic should go here
-				    # --- Screen-clearing code goes here
-				 
-				    # Here, we clear the screen to white. Don't put other drawing commands
-				    # above this, or they will be erased with this command.
-				 
-				    # If you want a background image, replace this clear with blit'ing the
-				    # background image.
 					# screen.fill(GRAY)
 				 
 				 	next_state, next_action, next_reward, done = track.step()
 				 	total_reward += (0.9 * next_reward)
-				 	if done:
-				 		track = reset(track, module_num)
-				 		state, action, reward = None, None, None
+				 	# if done:
+				 	# 	track = reset(track, module_num)
+				 	# 	state, action, reward = None, None, None
 					if not (state is None or action is None or reward is None):
-						track.agent.sarsa(state, action, reward, next_state, next_action, done)
-					 	state = next_state
-					 	action = next_action
-					 	reward = next_reward
-				    # --- Drawing code should go here
-					# draw_lanes(screen)
+						track.agent.sarsa(state, action, reward, next_state, next_action, False)
+				 	state = next_state
+				 	action = next_action
+				 	reward = next_reward
 
+					# draw_lanes(screen)
 					# draw_lights(screen, track.traffic_lights, track)
 					# draw_cars(screen, track.cars, track)
 					# draw_pedestrians(screen, track.pedestrians, track)
 					# draw_agent(screen, track.agent, track)
-				    # --- Go ahead and update the screen with what we've drawn.
-					delay = 0
-
+					# delay = 0
 					# pg.display.flip()
-				 #    # --- Limit to 60 frames per second
 					# clock.tick(60)
 					# pg.time.delay(delay)
+
+				track = reset(track, module_num)
+				state, action, reward = None, None, None
 				rewards.append(total_reward)
+			# plt.plot(range(500), rewards)
+			# plt.ylabel('Episode Discounted Return')
+			# plt.xlabel('Episode Number')
+			# if module_num == 1:
+			# 	title = "Forward"
+			# elif module_num == 2:
+			# 	title = "Traffic Light"
+			# elif module_num == 3:
+			# 	title = "Crash Avoidance"
+			# else:
+			# 	title= "Pedestrian Avoidance"
+			# plt.title(str(title) + " Module")
+			# plt.show()
 			reward_lists.append(rewards)
-		set_trace()
+
+		track.agent.training = False
+		track.agent.gmq = True
+		total_reward = 0
+		for j in range(300):
+		 	next_state, next_action, next_reward, done = track.step()
+		 	total_reward += next_reward
+		print "TOTAL REWARD IS " + str(total_reward)
+
+		total_reward = 0
+		track.agent.gmq = False
+		for j in range(300):
+		 	next_state, next_action, next_reward, done = track.step()
+		 	total_reward += next_reward
+		print "TOTAL REWARD IS " + str(total_reward)
 
 if __name__ == '__main__':
 	main()
